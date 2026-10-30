@@ -51,6 +51,28 @@ export class AIService {
   ): Promise<Activity[]> {
     return this.activeProvider.regenerateDay(trip, day, feedback, preserveActivities);
   }
+
+  public async refineItinerary(
+    trip: Trip,
+    currentItinerary: any,
+    message: string,
+    targetDay?: number,
+    preserveActivityIds: string[] = [],
+    history?: Array<{ role: string; content: string }>
+  ): Promise<{
+    itinerary: any;
+    changesSummary: string;
+    explanation: string;
+  }> {
+    return this.activeProvider.refineItinerary(
+      trip,
+      currentItinerary,
+      message,
+      targetDay,
+      preserveActivityIds,
+      history
+    );
+  }
 }
 
 export const aiService = new AIService();

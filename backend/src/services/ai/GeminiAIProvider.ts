@@ -146,4 +146,57 @@ export class GeminiAIProvider implements IAIProvider {
 
     return this.fallback.regenerateDay(trip, day, feedback, preserveActivities);
   }
+
+  public async refineItinerary(
+    trip: Trip,
+    currentItinerary: any,
+    message: string,
+    targetDay?: number,
+    preserveActivityIds: string[] = [],
+    history?: Array<{ role: string; content: string }>
+  ): Promise<{
+    itinerary: any;
+    changesSummary: string;
+    explanation: string;
+  }> {
+    try {
+      if (this.apiKey) {
+        const lockedActivities = (currentItinerary.days || [])
+          .flatMap((d: any) => d.activities || [])
+          .filter((a: any) => preserveActivityIds.includes(a.id));
+
+        const prompt = `You are Voyex, refining an existing itinerary based on a traveler request.
+TRIP: ${trip.destination} (${trip.start_date} to ${trip.end_date})
+USER REQUEST: "${message}"
+TARGET DAY: ${targetDay ? `Day ${targetDay}` : 'Entire trip / relevant days'}
+LOCKED ACTIVITIES (MUST NOT BE REMOVED OR CHANGED):
+${JSON.stringify(lockedActivities, null, 2)}
+
+CURRENT ITINERARY:
+${JSON.stringify(currentItinerary, null, 2)}
+
+Provide JSON with:
+{
+  "itinerary": <full updated itinerary object>,
+  "changes_summary": "1 sentence describing changes made",
+  "explanation": "2-3 sentences explaining rationale for changes and how locked stops were preserved"
+}`;
+
+        const raw = await this.callGemini(prompt);
+        const cleaned = this.cleanJson(raw);
+        const parsed = JSON.parse(cleaned);
+        if (parsed.itinerary && parsed.changes_summary) {
+          return {
+            itinerary: parsed.itinerary,
+            changesSummary: parsed.changes_summary,
+            explanation: parsed.explanation || parsed.changes_summary,
+          };
+        }
+      }
+    } catch (err: any) {
+      console.warn(`[GeminiAIProvider] Fallback to Mock refinement due to: ${err.message}`);
+    }
+
+    return this.fallback.refineItinerary(trip, currentItinerary, message, targetDay, preserveActivityIds, history);
+  }
 }

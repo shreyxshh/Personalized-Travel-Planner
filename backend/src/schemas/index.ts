@@ -91,6 +91,48 @@ export const exportQuerySchema = z.object({
   format: z.enum(['json', 'markdown', 'ics', 'pdf']).default('pdf'),
 });
 
+export const collaboratorInviteSchema = z.object({
+  email: z.string().email('Valid email address is required'),
+  role: z.enum(['viewer', 'editor']).default('viewer'),
+});
+
+export const collaboratorUpdateSchema = z.object({
+  role: z.enum(['viewer', 'editor']),
+});
+
+export const userRegisterSchema = z.object({
+  email: z.string().email('Valid email is required'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  display_name: z.string().optional(),
+  preferred_currency: z.string().length(3).default('USD'),
+});
+
+export const userLoginSchema = z.object({
+  email: z.string().email('Valid email is required'),
+  password: z.string().min(1, 'Password is required'),
+});
+
+export const refinementRequestSchema = z.object({
+  message: z.string().min(1, 'Refinement message is required'),
+  target_day: z.number().int().positive().optional(),
+  preserve_activity_ids: z.array(z.string()).default([]),
+  conversation_history: z.array(z.object({
+    role: z.string(),
+    content: z.string(),
+  })).optional(),
+});
+
+export const routeOptimizeSchema = z.object({
+  stops: z.array(z.any()).min(1, 'At least 1 stop is required'),
+  start_location: z.any().optional(),
+  end_location: z.any().optional(),
+  transit_mode: z.enum(['driving', 'walking']).default('driving'),
+  travel_pace: z.enum(['relaxed', 'moderate', 'fast']).default('moderate'),
+  day_start_time: z.string().default('09:00'),
+  day_end_time: z.string().default('21:00'),
+});
+
+
 // Zod schemas for AI response parsing & validation
 export const aiDestinationItemSchema = z.object({
   destination: z.string(),

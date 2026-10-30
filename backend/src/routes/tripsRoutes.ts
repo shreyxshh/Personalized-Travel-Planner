@@ -5,6 +5,10 @@ import {
   createTrip,
   updateTrip,
   deleteTrip,
+  getCollaborators,
+  addCollaborator,
+  updateCollaborator,
+  removeCollaborator,
 } from '../controllers/tripsController.js';
 import {
   generateItinerary,
@@ -12,7 +16,12 @@ import {
 } from '../controllers/itinerariesController.js';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
-import { tripCreateSchema, tripUpdateSchema } from '../schemas/index.js';
+import {
+  tripCreateSchema,
+  tripUpdateSchema,
+  collaboratorInviteSchema,
+  collaboratorUpdateSchema,
+} from '../schemas/index.js';
 
 export const tripsRoutes = Router();
 
@@ -28,3 +37,17 @@ tripsRoutes.delete('/api/v1/trips/:id', deleteTrip);
 // Trip Itinerary operations
 tripsRoutes.post('/api/v1/trips/:tripId/generate', generateItinerary);
 tripsRoutes.get('/api/v1/trips/:tripId/itineraries', getTripItineraries);
+
+// Collaborator operations
+tripsRoutes.get('/api/v1/trips/:tripId/collaborators', getCollaborators);
+tripsRoutes.post(
+  '/api/v1/trips/:tripId/collaborators',
+  validateBody(collaboratorInviteSchema),
+  addCollaborator
+);
+tripsRoutes.patch(
+  '/api/v1/trips/:tripId/collaborators/:collaboratorId',
+  validateBody(collaboratorUpdateSchema),
+  updateCollaborator
+);
+tripsRoutes.delete('/api/v1/trips/:tripId/collaborators/:collaboratorId', removeCollaborator);

@@ -339,4 +339,121 @@ export class SupabaseRepository implements ITripRepository {
 
     return !error;
   }
+
+  // Collaborators
+  public async getCollaborators(tripId: string): Promise<any[]> {
+    const { data, error } = await this.client
+      .from('trip_collaborators')
+      .select('*')
+      .eq('trip_id', tripId);
+    if (error) return [];
+    return data || [];
+  }
+
+  public async addCollaborator(
+    tripId: string,
+    email: string,
+    role: 'viewer' | 'editor' = 'viewer'
+  ): Promise<any> {
+    const id = uuidv4();
+    const payload = {
+      id,
+      trip_id: tripId,
+      email: email.toLowerCase().trim(),
+      role,
+      created_at: new Date().toISOString(),
+    };
+    const { data, error } = await this.client
+      .from('trip_collaborators')
+      .upsert(payload)
+      .select()
+      .single();
+    if (error) {
+      return payload;
+    }
+    return data;
+  }
+
+  public async updateCollaborator(
+    tripId: string,
+    collaboratorId: string,
+    role: 'viewer' | 'editor'
+  ): Promise<any | null> {
+    const { data, error } = await this.client
+      .from('trip_collaborators')
+      .update({ role, updated_at: new Date().toISOString() })
+      .eq('id', collaboratorId)
+      .eq('trip_id', tripId)
+      .select()
+      .single();
+    if (error) return null;
+    return data;
+  }
+
+  public async deleteCollaborator(tripId: string, collaboratorId: string): Promise<boolean> {
+    const { error } = await this.client
+      .from('trip_collaborators')
+      .delete()
+      .eq('id', collaboratorId)
+      .eq('trip_id', tripId);
+    return !error;
+  }
+
+  // Versioning
+  public async saveVersionSnapshot(
+    tripId: string,
+    version: number,
+    snapshot: any,
+    changesSummary?: string
+  ): Promise<any> {
+    const payload = {
+      id: uuidv4(),
+      trip_id: tripId,
+      version,
+      changes_summary: changesSummary || `Snapshot created for version ${version}`,
+      snapshot,
+      created_at: new Date().toISOString(),
+    };
+    const { data, error } = await this.client
+      .from('itinerary_versions')
+      .insert(payload)
+      .select()
+      .single();
+    if (error) return payload;
+    return data;
+  }
+
+  public async getVersions(tripId: string): Promise<any[]> {
+    const { data, error } = await this.client
+      .from('itinerary_versions')
+      .select('*')
+      .eq('trip_id', tripId)
+      .order('version', { ascending: false });
+    if (error) return [];
+    return data || [];
+  }
+
+  public async getVersion(tripId: string, version: number): Promise<any | null> {
+    const { data, error } = await this.client
+      .from('itinerary_versions')
+      .select('*')
+      .eq('trip_id', tripId)
+      .eq('version', version)
+      .single();
+    if (error) return null;
+    return data;
+  }
+
+  // Local Auth Users
+  public async registerUser(user: any): Promise<any> {
+    return user;
+  }
+
+  public async getUserByEmail(email: string): Promise<any | null> {
+    return null;
+  }
+
+  public async getUserById(id: string): Promise<any | null> {
+    return null;
+  }
 }

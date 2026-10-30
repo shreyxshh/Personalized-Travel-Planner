@@ -283,19 +283,19 @@ export const RouteMapVisualizer: React.FC<RouteMapVisualizerProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-sm border border-sand-200 overflow-hidden mb-8">
+    <div className="glass-card rounded-3xl overflow-hidden mb-8 shadow-sm">
       {/* Header bar */}
-      <div className="px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4 bg-slate-50/60">
+      <div className="px-6 py-4 border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-4 bg-slate-50/70">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-forest-50 text-forest-800">
+          <div className="p-2.5 rounded-2xl bg-brand-50 text-brand-700 border border-brand-200/50 shadow-xs">
             <Compass className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-900 flex items-center gap-2">
+            <h3 className="font-extrabold text-slate-900 flex items-center gap-2 text-base">
               Interactive Route Map
-              <Badge variant="forest">Day {dayNumber}</Badge>
+              <Badge variant="brand">Day {dayNumber}</Badge>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 mt-0.5">
               Live OpenStreetMap visualization &bull; Real streets, landmarks, and sequenced waypoints
             </p>
           </div>
@@ -304,11 +304,11 @@ export const RouteMapVisualizer: React.FC<RouteMapVisualizerProps> = ({
         {/* Action Controls */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           {/* Map Style Toggle */}
-          <div className="flex items-center bg-slate-200/70 p-1 rounded-xl text-xs font-medium text-slate-700">
+          <div className="flex items-center bg-slate-200/60 p-1 rounded-xl text-xs font-medium text-slate-700 border border-slate-200/80">
             <button
               onClick={() => setMapType('streets')}
               className={`px-2.5 py-1 rounded-lg text-xs transition-all flex items-center gap-1 ${
-                mapType === 'streets' ? 'bg-white shadow-2xs text-forest-800 font-bold' : 'text-slate-600'
+                mapType === 'streets' ? 'bg-white shadow-xs text-brand-700 font-bold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <MapIcon className="w-3.5 h-3.5" />
@@ -317,7 +317,7 @@ export const RouteMapVisualizer: React.FC<RouteMapVisualizerProps> = ({
             <button
               onClick={() => setMapType('satellite')}
               className={`px-2.5 py-1 rounded-lg text-xs transition-all flex items-center gap-1 ${
-                mapType === 'satellite' ? 'bg-white shadow-2xs text-forest-800 font-bold' : 'text-slate-600'
+                mapType === 'satellite' ? 'bg-white shadow-xs text-brand-700 font-bold' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Layers className="w-3.5 h-3.5" />
@@ -326,13 +326,13 @@ export const RouteMapVisualizer: React.FC<RouteMapVisualizerProps> = ({
           </div>
 
           {/* Pace Selection */}
-          <div className="flex items-center bg-slate-200/70 p-1 rounded-xl text-xs font-medium text-slate-700">
+          <div className="flex items-center bg-slate-200/60 p-1 rounded-xl text-xs font-medium text-slate-700 border border-slate-200/80">
             {(['relaxed', 'moderate', 'fast'] as const).map((mode) => (
               <button
                 key={mode}
                 onClick={() => setPace(mode)}
                 className={`px-2.5 py-1 rounded-lg capitalize text-xs transition-all ${
-                  pace === mode ? 'bg-white shadow-2xs text-forest-800 font-bold' : 'text-slate-600'
+                  pace === mode ? 'bg-white shadow-xs text-brand-700 font-bold' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {mode}
@@ -344,12 +344,12 @@ export const RouteMapVisualizer: React.FC<RouteMapVisualizerProps> = ({
           <button
             onClick={() => onOptimize(pace)}
             disabled={isOptimizing}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-forest-800 hover:bg-forest-900 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-xs transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow-brand-500/20 active:scale-95 transition-all"
           >
             {isOptimizing ? (
               <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              <Sparkles className="w-3.5 h-3.5 text-forest-200" />
+              <Sparkles className="w-3.5 h-3.5 text-brand-200" />
             )}
             Optimize Route
           </button>

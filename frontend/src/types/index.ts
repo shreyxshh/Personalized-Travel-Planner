@@ -190,6 +190,8 @@ export interface RefinementResponse {
   assistant_message: string;
   version: number;
   summary_of_changes: string[];
+  explanation?: string;
+  changes_summary?: string;
 }
 
 export interface ItineraryVersionItem {

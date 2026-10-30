@@ -3,11 +3,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: wanderai_backend
+    container_name: voyex_backend
     ports:
       - "8000:8000"
     environment:
-      - APP_NAME=WanderAI Travel Planner
+      - APP_NAME=Voyex Autonomous Travel Planner
       - APP_ENV=production
       - AI_PROVIDER=gemini
       - GEMINI_API_KEY=${GEMINI_API_KEY:-}
@@ -21,7 +21,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: wanderai_frontend
+    container_name: voyex_frontend
     ports:
       - "3000:80"
     depends_on:

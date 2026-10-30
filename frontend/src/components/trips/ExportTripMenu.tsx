@@ -19,7 +19,7 @@ export const ExportTripMenu: React.FC<ExportTripMenuProps> = ({ itineraryId, tri
       ext: '.pdf',
       icon: FileText,
       description: 'Publication-ready dossier with structured schedule, budgets, and travel tips.',
-      color: 'text-red-600 bg-red-50 border-red-200',
+      color: 'text-rose-600 bg-rose-50 border-rose-200',
     },
     {
       format: 'markdown' as const,
@@ -66,10 +66,10 @@ export const ExportTripMenu: React.FC<ExportTripMenuProps> = ({ itineraryId, tri
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-sand-300 text-slate-700 hover:bg-sand-50 font-semibold text-xs shadow-2xs transition-all"
+        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 hover:bg-slate-50 font-bold text-xs shadow-2xs hover:shadow-xs transition-all"
         title="Download itinerary dossier in multiple formats"
       >
-        <Download className="w-3.5 h-3.5 text-slate-600" />
+        <Download className="w-3.5 h-3.5 text-slate-500" />
         <span>Export</span>
         <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
       </button>
@@ -77,17 +77,17 @@ export const ExportTripMenu: React.FC<ExportTripMenuProps> = ({ itineraryId, tri
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-white border border-sand-200 shadow-xl z-50 p-2 animate-in fade-in zoom-in-95 duration-150">
-            <div className="px-3 py-2 border-b border-sand-100 flex items-center justify-between">
+          <div className="absolute right-0 mt-2 w-72 sm:w-80 rounded-3xl bg-white border border-slate-200 shadow-2xl z-50 p-2.5 animate-in fade-in zoom-in-95 duration-150">
+            <div className="px-3 py-2 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
                   Download Itinerary
                 </h4>
-                <p className="text-[11px] text-slate-500">Choose your preferred format</p>
+                <p className="text-[11px] text-slate-400 font-medium">Choose your preferred format</p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 rounded-md text-slate-400 hover:text-slate-600"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -102,28 +102,27 @@ export const ExportTripMenu: React.FC<ExportTripMenuProps> = ({ itineraryId, tri
                 return (
                   <button
                     key={opt.format}
-                    type="button"
-                    disabled={exportingFormat !== null}
                     onClick={() => handleExport(opt.format)}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-sand-50 transition-colors flex items-start gap-3 disabled:opacity-50 group border border-transparent hover:border-sand-200"
+                    disabled={Boolean(exportingFormat)}
+                    className="w-full text-left p-2.5 rounded-2xl hover:bg-slate-50 transition-colors flex items-start gap-3 border border-transparent hover:border-slate-200/80 group"
                   >
-                    <div className={`p-2 rounded-lg border shrink-0 ${opt.color}`}>
-                      <Icon className="w-4 h-4" />
+                    <div className={`p-2 rounded-xl border ${opt.color} shrink-0`}>
+                      {isSuccess ? (
+                        <Check className="w-4 h-4 text-emerald-600" />
+                      ) : isExporting ? (
+                        <Sparkles className="w-4 h-4 animate-spin text-brand-600" />
+                      ) : (
+                        <Icon className="w-4 h-4" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-900 group-hover:text-forest-800">
+                        <span className="text-xs font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
                           {opt.label}
                         </span>
-                        {isExporting ? (
-                          <Sparkles className="w-3.5 h-3.5 text-forest-700 animate-spin" />
-                        ) : isSuccess ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-600" />
-                        ) : (
-                          <span className="text-[10px] font-mono text-slate-400">{opt.ext}</span>
-                        )}
+                        <span className="text-[10px] font-mono text-slate-400">{opt.ext}</span>
                       </div>
-                      <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                      <p className="text-[11px] text-slate-500 leading-snug mt-0.5 line-clamp-2">
                         {opt.description}
                       </p>
                     </div>

@@ -223,7 +223,165 @@ describe('Express API Endpoint Integration Tests', () => {
 
       expect(res.status).toBe(200);
       expect(res.headers['content-type']).toContain('text/html');
-      expect(res.text).toContain('WanderAI Itinerary Dossier');
+      expect(res.text).toContain('Voyex Itinerary Dossier');
+    });
+  });
+
+  describe('Authentication Endpoints', () => {
+    it('POST /api/v1/auth/register creates a new user and returns JWT access token', async () => {
+      const testEmail = `traveler_${Date.now()}@test.com`;
+      const res = await request(app)
+        .post('/api/v1/auth/register')
+        .send({
+          email: testEmail,
+          password: 'SecretPassword123!',
+          display_name: 'Alex Wanderer',
+          preferred_currency: 'EUR',
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.access_token).toBeDefined();
+      expect(res.body.user.email).toBe(testEmail);
+      expect(res.body.user.display_name).toBe('Alex Wanderer');
+    });
+
+    it('POST /api/v1/auth/login authenticates registered users', async () => {
+      const res = await request(app)
+        .post('/api/v1/auth/login')
+        .send({
+          email: 'traveler@example.com',
+          password: 'Password123!',
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.access_token).toBeDefined();
+      expect(res.body.user.email).toBe('traveler@example.com');
+    });
+  });
+
+  describe('Collaborator Operations', () => {
+    let collabId: string;
+    const testTripId = '11111111-1111-1111-1111-111111111111';
+
+    it('GET /api/v1/trips/:tripId/collaborators lists collaborators', async () => {
+      const res = await request(app)
+        .get(`/api/v1/trips/${testTripId}/collaborators`)
+        .set('Authorization', 'Bearer demo-token');
+
+      expect(res.status).toBe(200);
+      expect(res.body).toBeInstanceOf(Array);
+    });
+
+    it('POST /api/v1/trips/:tripId/collaborators adds a collaborator', async () => {
+      const res = await request(app)
+        .post(`/api/v1/trips/${testTripId}/collaborators`)
+        .set('Authorization', 'Bearer demo-token')
+        .send({
+          email: 'companion.travel@example.com',
+          role: 'editor',
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.email).toBe('companion.travel@example.com');
+      expect(res.body.role).toBe('editor');
+      collabId = res.body.id;
+    });
+
+    it('PATCH /api/v1/trips/:tripId/collaborators/:id updates role', async () => {
+      const res = await request(app)
+        .patch(`/api/v1/trips/${testTripId}/collaborators/${collabId}`)
+        .set('Authorization', 'Bearer demo-token')
+        .send({ role: 'viewer' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.role).toBe('viewer');
+    });
+
+    it('DELETE /api/v1/trips/:tripId/collaborators/:id removes collaborator', async () => {
+      const res = await request(app)
+        .delete(`/api/v1/trips/${testTripId}/collaborators/${collabId}`)
+        .set('Authorization', 'Bearer demo-token');
+
+      expect(res.status).toBe(204);
+    });
+  });
+
+  describe('Conversational Refinement & Version Snapshots', () => {
+    const testTripId = '11111111-1111-1111-1111-111111111111';
+
+    it('POST /api/v1/itineraries/:tripId/refine refines schedule and creates new version', async () => {
+      const res = await request(app)
+        .post(`/api/v1/itineraries/${testTripId}/refine`)
+        .set('Authorization', 'Bearer demo-token')
+        .send({
+          message: 'Swap afternoon temple for scenic botanical garden walk',
+          target_day: 1,
+          preserve_activity_ids: ['act-101'],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.version).toBeGreaterThan(1);
+      expect(res.body.changes_summary).toBeDefined();
+      expect(res.body.explanation).toBeDefined();
+    });
+
+    it('GET /api/v1/itineraries/:tripId/versions retrieves version history', async () => {
+      const res = await request(app)
+        .get(`/api/v1/itineraries/${testTripId}/versions`)
+        .set('Authorization', 'Bearer demo-token');
+
+      expect(res.status).toBe(200);
+      expect(res.body.versions).toBeInstanceOf(Array);
+      expect(res.body.versions.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('Route Optimization & Scheduling', () => {
+    it('POST /api/v1/routes/optimize returns optimized stops sequence', async () => {
+      const res = await request(app)
+        .post('/api/v1/routes/optimize')
+        .set('Authorization', 'Bearer demo-token')
+        .send({
+          stops: [
+            { id: 's1', name: 'Stop A', latitude: 35.0, longitude: 135.0 },
+            { id: 's2', name: 'Stop B', latitude: 35.1, longitude: 135.1 },
+            { id: 's3', name: 'Stop C', latitude: 35.05, longitude: 135.05 },
+          ],
+          transit_mode: 'driving',
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.optimized_stops.length).toBe(3);
+      expect(res.body.legs.length).toBe(2);
+    });
+
+    it('POST /api/v1/routes/compare compares route efficiency', async () => {
+      const res = await request(app)
+        .post('/api/v1/routes/compare')
+        .set('Authorization', 'Bearer demo-token')
+        .send({
+          original_stops: [
+            { latitude: 35.0, longitude: 135.0 },
+            { latitude: 35.2, longitude: 135.2 },
+            { latitude: 35.05, longitude: 135.05 },
+          ],
+          optimized_stops: [
+            { latitude: 35.0, longitude: 135.0 },
+            { latitude: 35.05, longitude: 135.05 },
+            { latitude: 35.2, longitude: 135.2 },
+          ],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.distance_saved_km).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe('Readiness Probe', () => {
+    it('GET /ready returns 200 ready probe', async () => {
+      const res = await request(app).get('/ready');
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('ready');
     });
   });
 });

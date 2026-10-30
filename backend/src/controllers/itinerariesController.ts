@@ -287,3 +287,188 @@ export const updateItinerary = async (
     next(error);
   }
 };
+
+export const refineItinerary = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const userId = req.user?.id;
+    const { message, target_day, preserve_activity_ids = [], conversation_history } = req.body;
+
+    const trip = await tripRepository.getTripById(tripId, userId);
+    if (!trip) {
+      throw new AppError('Trip not found', 404);
+    }
+
+    const itins = await tripRepository.getItinerariesByTripId(tripId);
+    let currentItin = itins.length > 0 ? itins[0] : null;
+    if (!currentItin) {
+      currentItin = await tripRepository.getItineraryById(tripId);
+    }
+    if (!currentItin) {
+      throw new AppError('No itinerary found to refine for this trip', 404);
+    }
+
+    // Call AI Service to refine
+    const refinement = await aiService.refineItinerary(
+      trip,
+      currentItin,
+      message,
+      target_day,
+      preserve_activity_ids,
+      conversation_history
+    );
+
+    // Save snapshot of previous state before updating version
+    await tripRepository.saveVersionSnapshot(
+      tripId,
+      currentItin.version,
+      currentItin,
+      `Pre-refinement snapshot v${currentItin.version}`
+    );
+
+    // Increment version and save
+    const newVersion = currentItin.version + 1;
+    const updatedItin: Itinerary = {
+      ...refinement.itinerary,
+      id: currentItin.id,
+      trip_id: tripId,
+      version: newVersion,
+      updated_at: new Date().toISOString(),
+    };
+
+    const saved = await tripRepository.saveItinerary(updatedItin);
+
+    // Save new snapshot
+    await tripRepository.saveVersionSnapshot(
+      tripId,
+      newVersion,
+      saved,
+      refinement.changesSummary
+    );
+
+    res.json({
+      itinerary: saved,
+      version: newVersion,
+      changes_summary: refinement.changesSummary,
+      explanation: refinement.explanation,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getItineraryVersions = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const versions = await tripRepository.getVersions(tripId);
+    const itins = await tripRepository.getItinerariesByTripId(tripId);
+    const currentVersion = itins.length > 0 ? itins[0].version : 1;
+
+    res.json({
+      trip_id: tripId,
+      current_version: currentVersion,
+      total_versions: versions.length,
+      versions: versions.map((v) => ({
+        id: v.id,
+        trip_id: v.trip_id,
+        version: v.version,
+        created_at: v.created_at,
+        changes_summary: v.changes_summary,
+      })),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getItineraryVersionSnapshot = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const versionNum = parseInt(req.params.version, 10);
+    const snapshot = await tripRepository.getVersion(tripId, versionNum);
+    if (!snapshot) {
+      throw new AppError(`Version ${versionNum} not found`, 404);
+    }
+    res.json(snapshot);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const restoreItineraryVersion = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const versionNum = parseInt(req.params.version, 10);
+    const snapshotRecord = await tripRepository.getVersion(tripId, versionNum);
+    if (!snapshotRecord) {
+      throw new AppError(`Version ${versionNum} not found to restore`, 404);
+    }
+
+    const itins = await tripRepository.getItinerariesByTripId(tripId);
+    const nextVer = itins.length > 0 ? itins[0].version + 1 : versionNum + 1;
+
+    const restoredItin: Itinerary = {
+      ...(snapshotRecord.snapshot || snapshotRecord),
+      version: nextVer,
+      updated_at: new Date().toISOString(),
+    };
+
+    const saved = await tripRepository.saveItinerary(restoredItin);
+    await tripRepository.saveVersionSnapshot(
+      tripId,
+      nextVer,
+      saved,
+      `Restored from version ${versionNum}`
+    );
+
+    res.json(saved);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const optimizeTripItinerary = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const itins = await tripRepository.getItinerariesByTripId(tripId);
+    let itin = itins.length > 0 ? itins[0] : null;
+    if (!itin) {
+      itin = await tripRepository.getItineraryById(tripId);
+    }
+    if (!itin) {
+      throw new AppError('Itinerary not found to optimize', 404);
+    }
+
+    const enrichedDays = await routingService.enrichDaysWithRouting(itin.days);
+    const updatedItin: Itinerary = {
+      ...itin,
+      days: enrichedDays,
+      updated_at: new Date().toISOString(),
+    };
+
+    const saved = await tripRepository.saveItinerary(updatedItin);
+    res.json(saved);
+  } catch (error) {
+    next(error);
+  }
+};

@@ -6,7 +6,7 @@ import { routingService } from './services/routing/RoutingService.js';
 
 const server = app.listen(config.port, () => {
   console.log('================================================================');
-  console.log(`🚀 WanderAI Backend API listening on port ${config.port}`);
+  console.log(`🚀 Voyex Backend API listening on port ${config.port}`);
   console.log(`🌐 Environment: ${config.env}`);
   console.log(`🤖 AI Provider: ${aiService.getActiveProviderName()}`);
   console.log(`🗺️ Routing Provider: ${routingService.getProviderName()}`);

@@ -1,7 +1,7 @@
 import { DestinationDiscoveryRequest, Trip, ItineraryDay, Activity } from '../../types/index.js';
 
 export const buildDestinationDiscoveryPrompt = (req: DestinationDiscoveryRequest): string => {
-  return `You are WanderAI, an expert travel planning system.
+  return `You are Voyex, an expert autonomous travel planning system.
 Given the following traveler profile, recommend exactly 4 destination options that best align with their desires.
 
 TRAVELER PREFERENCES:
@@ -46,7 +46,7 @@ Do not invent live flight prices or guarantee room availability. All monetary am
 };
 
 export const buildItineraryGenerationPrompt = (trip: Trip, daysCount: number): string => {
-  return `You are WanderAI, a world-class travel planner.
+  return `You are Voyex, a world-class travel planner.
 Generate a structured, evidence-grounded day-by-day travel itinerary.
 
 TRIP DETAILS:
@@ -122,7 +122,7 @@ export const buildDayRegenerationPrompt = (
   feedback: string,
   preservedActivities: Activity[]
 ): string => {
-  return `You are WanderAI. The traveler wants to regenerate Day ${day.day_number} (${day.date}) in ${trip.destination}.
+  return `You are Voyex. The traveler wants to regenerate Day ${day.day_number} (${day.date}) in ${trip.destination}.
 
 FEEDBACK / REQUEST:
 "${feedback}"

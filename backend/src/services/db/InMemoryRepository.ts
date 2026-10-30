@@ -19,6 +19,9 @@ export class InMemoryRepository implements ITripRepository {
   private itineraries: Map<string, Itinerary> = new Map();
   private shares: Map<string, { tripId: string; ownerId: string; expiresAt?: string; revoked: boolean }> =
     new Map();
+  private collaborators: Map<string, any[]> = new Map();
+  private versionSnapshots: Map<string, any[]> = new Map();
+  private users: Map<string, any> = new Map();
 
   constructor() {
     this.seedDemoData();
@@ -229,6 +232,39 @@ export class InMemoryRepository implements ITripRepository {
 
     this.trips.set(sampleTripId, seedTrip);
     this.itineraries.set(sampleItinId, seedItinerary);
+
+    // Seed mock user
+    this.users.set('traveler@example.com', {
+      id: demoUserId,
+      email: 'traveler@example.com',
+      password: 'Password123!',
+      display_name: 'Demo Explorer',
+      preferred_currency: 'USD',
+      created_at: new Date().toISOString(),
+    });
+
+    // Seed mock collaborator
+    this.collaborators.set(sampleTripId, [
+      {
+        id: 'collab-1',
+        trip_id: sampleTripId,
+        email: 'sarah.companion@example.com',
+        role: 'editor',
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+      },
+    ]);
+
+    // Seed version snapshot
+    this.versionSnapshots.set(sampleTripId, [
+      {
+        id: uuidv4(),
+        trip_id: sampleTripId,
+        version: 1,
+        created_at: seedItinerary.created_at,
+        changes_summary: 'Initial itinerary generated from Kyoto cultural travel preferences',
+        snapshot: seedItinerary,
+      },
+    ]);
   }
 
   public async getTrips(userId: string): Promise<Trip[]> {
@@ -433,5 +469,105 @@ export class InMemoryRepository implements ITripRepository {
       }
     }
     return false;
+  }
+
+  // Collaborator operations
+  public async getCollaborators(tripId: string): Promise<any[]> {
+    return this.collaborators.get(tripId) || [];
+  }
+
+  public async addCollaborator(
+    tripId: string,
+    email: string,
+    role: 'viewer' | 'editor' = 'viewer'
+  ): Promise<any> {
+    const list = this.collaborators.get(tripId) || [];
+    const existing = list.find((c) => c.email.toLowerCase() === email.toLowerCase());
+    if (existing) {
+      existing.role = role;
+      existing.updated_at = new Date().toISOString();
+      return existing;
+    }
+    const newCollab = {
+      id: uuidv4(),
+      trip_id: tripId,
+      email: email.toLowerCase().trim(),
+      role,
+      created_at: new Date().toISOString(),
+    };
+    list.push(newCollab);
+    this.collaborators.set(tripId, list);
+    return newCollab;
+  }
+
+  public async updateCollaborator(
+    tripId: string,
+    collaboratorId: string,
+    role: 'viewer' | 'editor'
+  ): Promise<any | null> {
+    const list = this.collaborators.get(tripId) || [];
+    const item = list.find((c) => c.id === collaboratorId);
+    if (!item) return null;
+    item.role = role;
+    item.updated_at = new Date().toISOString();
+    return item;
+  }
+
+  public async deleteCollaborator(tripId: string, collaboratorId: string): Promise<boolean> {
+    const list = this.collaborators.get(tripId) || [];
+    const idx = list.findIndex((c) => c.id === collaboratorId);
+    if (idx === -1) return false;
+    list.splice(idx, 1);
+    this.collaborators.set(tripId, list);
+    return true;
+  }
+
+  // Version snapshot operations
+  public async saveVersionSnapshot(
+    tripId: string,
+    version: number,
+    snapshot: any,
+    changesSummary?: string
+  ): Promise<any> {
+    const list = this.versionSnapshots.get(tripId) || [];
+    const item = {
+      id: uuidv4(),
+      trip_id: tripId,
+      version,
+      created_at: new Date().toISOString(),
+      changes_summary: changesSummary || `Snapshot created for version ${version}`,
+      snapshot,
+    };
+    list.unshift(item);
+    this.versionSnapshots.set(tripId, list);
+    return item;
+  }
+
+  public async getVersions(tripId: string): Promise<any[]> {
+    return this.versionSnapshots.get(tripId) || [];
+  }
+
+  public async getVersion(tripId: string, version: number): Promise<any | null> {
+    const list = this.versionSnapshots.get(tripId) || [];
+    return list.find((v) => v.version === version) || null;
+  }
+
+  // Local users / auth
+  public async registerUser(user: any): Promise<any> {
+    const emailKey = user.email.toLowerCase().trim();
+    this.users.set(emailKey, user);
+    return user;
+  }
+
+  public async getUserByEmail(email: string): Promise<any | null> {
+    const emailKey = email.toLowerCase().trim();
+    return this.users.get(emailKey) || null;
+  }
+
+  public async getUserById(id: string): Promise<any | null> {
+    for (const u of this.users.values()) {
+      if (u.id === id) return u;
+    }
+    return null;
   }
 }

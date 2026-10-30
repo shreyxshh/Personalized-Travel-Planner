@@ -7,10 +7,19 @@ import {
   exportItinerary,
   generateItinerary,
   updateItinerary,
+  refineItinerary,
+  getItineraryVersions,
+  getItineraryVersionSnapshot,
+  restoreItineraryVersion,
+  optimizeTripItinerary,
 } from '../controllers/itinerariesController.js';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validate.js';
-import { activityUpdateSchema, regenerateDaySchema } from '../schemas/index.js';
+import {
+  activityUpdateSchema,
+  regenerateDaySchema,
+  refinementRequestSchema,
+} from '../schemas/index.js';
 
 export const itinerariesRoutes = Router();
 
@@ -35,3 +44,17 @@ itinerariesRoutes.post(
   validateBody(regenerateDaySchema),
   regenerateDay
 );
+
+// Conversational Refinement & Version History
+itinerariesRoutes.post(
+  '/api/v1/itineraries/:id/refine',
+  validateBody(refinementRequestSchema),
+  refineItinerary
+);
+itinerariesRoutes.get('/api/v1/itineraries/:id/versions', getItineraryVersions);
+itinerariesRoutes.get('/api/v1/itineraries/:id/versions/:version', getItineraryVersionSnapshot);
+itinerariesRoutes.post('/api/v1/itineraries/:id/versions/:version/restore', restoreItineraryVersion);
+
+// Itinerary Route Optimization
+itinerariesRoutes.post('/api/v1/itineraries/:id/optimize', optimizeTripItinerary);
+itinerariesRoutes.get('/api/v1/itineraries/:id/optimized', getItineraryById);

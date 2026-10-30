@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ItineraryDay, Activity } from '../../types';
 import { ItineraryDaySection } from './ItineraryDaySection';
 import { RouteMapVisualizer } from '../RouteMapVisualizer';
+import { Calendar } from 'lucide-react';
 
 interface ItineraryTimelineProps {
   days: ItineraryDay[];
@@ -32,8 +33,8 @@ export const ItineraryTimeline: React.FC<ItineraryTimelineProps> = ({
 
   if (!days || days.length === 0) {
     return (
-      <div className="p-8 text-center bg-white rounded-3xl border border-sand-200">
-        <p className="text-sm text-slate-500">No daily schedule generated yet.</p>
+      <div className="p-12 text-center glass-card rounded-3xl">
+        <p className="text-sm font-bold text-slate-500">No daily schedule generated yet.</p>
       </div>
     );
   }
@@ -51,14 +52,14 @@ export const ItineraryTimeline: React.FC<ItineraryTimelineProps> = ({
               key={d.id || d.day_number}
               type="button"
               onClick={() => setSelectedDayNumber(d.day_number)}
-              className={`px-4 sm:px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap shrink-0 flex items-center gap-2 ${
+              className={`px-5 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all whitespace-nowrap shrink-0 flex items-center gap-2 ${
                 isActive
-                  ? 'bg-forest-800 text-white shadow-md'
-                  : 'bg-white text-slate-700 hover:bg-sand-100 border border-sand-200'
+                  ? 'bg-slate-950 text-white shadow-md shadow-slate-950/20 scale-[1.02]'
+                  : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200/90 shadow-2xs hover:border-slate-300'
               }`}
             >
               <span>Day {d.day_number}</span>
-              <span className={`text-[11px] font-normal ${isActive ? 'text-forest-200' : 'text-slate-400'}`}>
+              <span className={`text-[11px] font-semibold ${isActive ? 'text-brand-300' : 'text-slate-400'}`}>
                 {d.date ? d.date.slice(5) : ''}
               </span>
             </button>

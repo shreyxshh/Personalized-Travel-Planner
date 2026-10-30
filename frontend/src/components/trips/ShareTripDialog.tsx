@@ -42,7 +42,8 @@ export const ShareTripDialog: React.FC<ShareTripDialogProps> = ({
       setIsLoading(true);
       setError(null);
       const res = await api.createShare(tripId, expiresInDays);
-      setShareUrl(res.share_url);
+      const fullUrl = `${window.location.origin}${res.share_url}`;
+      setShareUrl(fullUrl);
       setShareId(res.id);
     } catch (err: any) {
       setError(err.message || 'Failed to create share link.');
@@ -77,20 +78,20 @@ export const ShareTripDialog: React.FC<ShareTripDialogProps> = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Share Trip Summary" maxWidth="max-w-lg">
-      <div className="space-y-5">
-        <p className="text-xs sm:text-sm text-slate-600">
+      <div className="space-y-6">
+        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
           Create an unguessable read-only link to share your {destination} itinerary with friends, family, or travel companions.
         </p>
 
         {error && (
-          <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
+          <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
         {!shareUrl ? (
-          <div className="p-5 rounded-2xl bg-sand-50 border border-sand-200 space-y-4">
+          <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 space-y-4">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
                 Link Expiration
@@ -105,10 +106,10 @@ export const ShareTripDialog: React.FC<ShareTripDialogProps> = ({
                     key={item.val}
                     type="button"
                     onClick={() => setExpiresInDays(item.val)}
-                    className={`py-2 px-3 rounded-xl text-xs font-bold border text-center transition-all ${
+                    className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
                       expiresInDays === item.val
-                        ? 'border-forest-700 bg-forest-50 text-forest-900 shadow-2xs'
-                        : 'border-sand-300 bg-white text-slate-600 hover:bg-sand-100'
+                        ? 'bg-slate-950 text-white border-slate-950 shadow-xs'
+                        : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300'
                     }`}
                   >
                     {item.label}
@@ -121,104 +122,68 @@ export const ShareTripDialog: React.FC<ShareTripDialogProps> = ({
               type="button"
               onClick={handleCreateShare}
               disabled={isLoading}
-              className="w-full py-2.5 px-4 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-gradient-to-r from-brand-700 to-brand-800 hover:from-brand-800 hover:to-brand-900 text-white text-xs font-bold shadow-md shadow-brand-700/20 transition-all disabled:opacity-50 hover:scale-[1.01]"
             >
-              <Globe className="w-4 h-4" />
-              {isLoading ? 'Generating Public Link...' : 'Generate Shareable Link'}
+              <Share2 className="w-4 h-4" />
+              {isLoading ? 'Generating Link...' : 'Generate Shareable Link'}
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-                Active Public Link
-              </label>
-              <div className="flex items-center gap-2 p-2 rounded-xl border border-sand-300 bg-sand-50/70">
-                <input
-                  type="text"
-                  readOnly
-                  value={shareUrl}
-                  className="w-full text-xs font-mono bg-transparent outline-none text-slate-800 truncate"
-                />
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-forest-800 hover:bg-forest-900 text-white font-semibold text-xs transition-colors shrink-0"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-300" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      Copy Link
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Quick Social Sharing */}
-            <div>
-              <span className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                Send Directly Via
+          <div className="p-6 rounded-3xl bg-slate-50 border border-slate-200/80 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Active Shareable Link
               </span>
-              <div className="flex items-center gap-2">
-                <a
-                  href={`https://api.whatsapp.com/send?text=${shareText}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl border border-sand-200 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 transition-colors"
-                  title="Share on WhatsApp"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                </a>
-                <a
-                  href={`mailto:?subject=${encodeURIComponent(tripTitle)}&body=${shareText}`}
-                  className="p-2.5 rounded-xl border border-sand-200 hover:bg-ocean-50 hover:text-ocean-700 text-slate-600 transition-colors"
-                  title="Share via Email"
-                >
-                  <Mail className="w-4 h-4" />
-                </a>
-                <a
-                  href={`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(tripTitle)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl border border-sand-200 hover:bg-blue-50 hover:text-blue-700 text-slate-600 transition-colors"
-                  title="Share on Telegram"
-                >
-                  <Send className="w-4 h-4" />
-                </a>
-              </div>
+              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                Expires in {expiresInDays} days
+              </span>
             </div>
 
-            {/* Revoke Option */}
-            <div className="pt-2 border-t border-sand-200 flex items-center justify-between">
-              <span className="text-xs text-slate-400">Expires in {expiresInDays} days</span>
+            <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-slate-200">
+              <input
+                type="text"
+                readOnly
+                value={shareUrl}
+                className="w-full text-xs font-mono text-slate-800 px-2 outline-none bg-transparent"
+              />
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="p-2 rounded-xl bg-slate-950 hover:bg-slate-900 text-white transition-colors shrink-0 shadow-xs"
+                title="Copy link to clipboard"
+              >
+                {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              </button>
+            </div>
+
+            {copied && (
+              <p className="text-xs font-semibold text-emerald-600 text-center animate-in fade-in">
+                Link copied to clipboard!
+              </p>
+            )}
+
+            <div className="flex items-center justify-between pt-2">
               <button
                 type="button"
                 onClick={handleRevoke}
                 disabled={isLoading}
-                className="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 font-semibold"
+                className="text-xs text-rose-600 hover:text-rose-800 font-bold hover:underline"
               >
-                <Trash2 className="w-3.5 h-3.5" />
                 Revoke Link
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShareUrl('');
+                  setShareId(null);
+                }}
+                className="text-xs text-slate-500 hover:text-slate-800 font-semibold"
+              >
+                Create New Link
               </button>
             </div>
           </div>
         )}
-
-        <div className="pt-2 border-t border-sand-100 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-sand-100"
-          >
-            Close
-          </button>
-        </div>
       </div>
     </Modal>
   );

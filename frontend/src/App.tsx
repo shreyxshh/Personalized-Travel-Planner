@@ -19,8 +19,8 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((m) => ({ de
 
 const PageLoadingFallback: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-    <Sparkles className="w-8 h-8 text-forest-700 animate-spin" />
-    <span className="text-sm font-medium text-slate-500">Loading view...</span>
+    <Sparkles className="w-8 h-8 text-brand-600 animate-spin" />
+    <span className="text-sm font-semibold text-slate-500">Loading view...</span>
   </div>
 );
 

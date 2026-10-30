@@ -20,4 +20,16 @@ export interface IAIProvider {
     feedback: string,
     preserveActivities: Activity[]
   ): Promise<Activity[]>;
+  refineItinerary(
+    trip: Trip,
+    currentItinerary: any,
+    message: string,
+    targetDay?: number,
+    preserveActivityIds?: string[],
+    history?: Array<{ role: string; content: string }>
+  ): Promise<{
+    itinerary: any;
+    changesSummary: string;
+    explanation: string;
+  }>;
 }

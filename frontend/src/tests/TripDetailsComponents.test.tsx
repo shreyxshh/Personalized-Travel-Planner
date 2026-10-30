@@ -145,7 +145,7 @@ describe('TripDetails UI Components', () => {
     );
 
     expect(screen.getByText('Trip Collaborators & Friends')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('friend@wanderai.app')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('friend@voyex.app')).toBeInTheDocument();
     expect(screen.getByText('Invite')).toBeInTheDocument();
   });
 });

@@ -4,8 +4,32 @@
 
 @layer base {
   body {
-    @apply bg-sand-50 text-slate-800 antialiased font-sans;
+    @apply bg-sand-50 text-slate-800 antialiased font-sans selection:bg-brand-100 selection:text-brand-900;
   }
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.glass-card-hover {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -8px rgba(15, 23, 42, 0.12);
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+.glass-navbar {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 /* Custom Scrollbar */

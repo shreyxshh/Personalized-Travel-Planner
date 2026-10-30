@@ -6,11 +6,20 @@ import { dbService } from '../services/db/DatabaseService.js';
 export const getHealth = (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
-    app: 'WanderAI - Personalized Travel Itinerary Planner',
+    app: 'Voyex - Autonomous AI Travel Planner',
     timestamp: new Date().toISOString(),
     backend_mode: dbService.getBackendType(),
     active_ai_provider: aiService.getActiveProviderName(),
     active_routing_provider: routingService.getProviderName(),
+  });
+};
+
+export const getReadiness = (req: Request, res: Response) => {
+  res.json({
+    status: 'ready',
+    database: dbService.getBackendType(),
+    ai_provider: aiService.getActiveProviderName(),
+    routing: routingService.getProviderName(),
   });
 };
 

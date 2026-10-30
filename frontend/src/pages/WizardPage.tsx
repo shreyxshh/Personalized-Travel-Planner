@@ -248,18 +248,18 @@ export const WizardPage: React.FC = () => {
       {/* 4-Step Stepper Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-forest-800 text-white text-xs font-bold flex items-center justify-center">
+          <div className="flex items-center gap-2.5">
+            <span className="w-7 h-7 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white text-xs font-extrabold flex items-center justify-center shadow-sm shadow-brand-500/30">
               {step}
             </span>
-            <span className="text-sm font-bold text-slate-900">
+            <span className="text-sm font-extrabold text-slate-900">
               {step === 1 && 'Step 1: Destination & Dates'}
               {step === 2 && 'Step 2: Travelers & Budget'}
               {step === 3 && 'Step 3: Vibes, Pace & Interests'}
               {step === 4 && 'Step 4: Review & Generate Itinerary'}
             </span>
           </div>
-          <span className="text-xs font-medium text-slate-500">
+          <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
             Step {step} of 4 ({Math.round((step / 4) * 100)}%)
           </span>
         </div>
@@ -270,7 +270,7 @@ export const WizardPage: React.FC = () => {
             <div
               key={s}
               className={`h-2 rounded-full transition-all duration-300 ${
-                s <= step ? 'bg-forest-800' : 'bg-sand-200'
+                s <= step ? 'bg-gradient-to-r from-brand-500 to-indigo-600 shadow-xs' : 'bg-slate-200'
               }`}
             />
           ))}
@@ -279,14 +279,14 @@ export const WizardPage: React.FC = () => {
 
       {/* Error Alert */}
       {error && (
-        <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-3 text-red-700 text-sm">
+        <div className="mb-6 p-4 rounded-2xl bg-red-50/90 border border-red-200 flex items-start gap-3 text-red-700 text-sm">
           <AlertCircle className="w-5 h-5 shrink-0 text-red-500 mt-0.5" />
           <p>{error}</p>
         </div>
       )}
 
       {/* Main Form Container */}
-      <div className="bg-white rounded-3xl border border-sand-200 p-6 sm:p-10 shadow-sm overflow-hidden">
+      <div className="glass-card rounded-3xl p-6 sm:p-10 shadow-sm overflow-hidden">
         <AnimatePresence mode="wait">
           {/* STEP 1: Destination & Dates */}
           {step === 1 && (
@@ -318,19 +318,19 @@ export const WizardPage: React.FC = () => {
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
                     placeholder="e.g. Kyoto, Japan or Florence, Italy"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-sand-300 focus:border-forest-600 focus:ring-1 focus:ring-forest-600 outline-none text-slate-900 font-medium text-sm"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 bg-white/70 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none text-slate-900 font-semibold text-sm transition-all placeholder:text-slate-400"
                   />
                 </div>
 
                 {/* Popular Quick-Pick Tags */}
                 <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
-                  <span className="text-xs text-slate-400 font-medium">Popular:</span>
+                  <span className="text-xs text-slate-400 font-semibold">Popular:</span>
                   {popularDestinations.map((city) => (
                     <button
                       key={city}
                       type="button"
                       onClick={() => setDestination(city)}
-                      className="px-2.5 py-1 rounded-lg bg-sand-100 hover:bg-sand-200 text-slate-700 text-xs transition-colors"
+                      className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-brand-50 hover:text-brand-700 text-slate-700 text-xs font-medium border border-slate-200/60 transition-all active:scale-95"
                     >
                       {city}
                     </button>
@@ -348,7 +348,7 @@ export const WizardPage: React.FC = () => {
                   value={origin}
                   onChange={(e) => setOrigin(e.target.value)}
                   placeholder="e.g. San Francisco or London Heathrow"
-                  className="w-full px-4 py-2.5 rounded-xl border border-sand-300 focus:border-forest-600 outline-none text-slate-900 text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white/70 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none text-slate-900 text-sm transition-all placeholder:text-slate-400"
                 />
               </div>
 
@@ -458,11 +458,11 @@ export const WizardPage: React.FC = () => {
                       onClick={() => handleGroupSelect(g.id as any)}
                       className={`p-3.5 rounded-2xl border text-left transition-all ${
                         groupType === g.id
-                          ? 'border-forest-700 bg-forest-50/70 shadow-2xs'
-                          : 'border-sand-200 hover:border-sand-300 bg-white'
+                          ? 'border-brand-500 bg-brand-50/70 shadow-xs'
+                          : 'border-slate-200 hover:border-slate-300 bg-white/70'
                       }`}
                     >
-                      <Users className={`w-5 h-5 mb-1.5 ${groupType === g.id ? 'text-forest-800' : 'text-slate-400'}`} />
+                      <Users className={`w-5 h-5 mb-1.5 ${groupType === g.id ? 'text-brand-600' : 'text-slate-400'}`} />
                       <div className="font-bold text-xs text-slate-900">{g.label}</div>
                       <div className="text-[11px] text-slate-500">{g.desc}</div>
                     </button>
@@ -470,7 +470,7 @@ export const WizardPage: React.FC = () => {
                 </div>
 
                 <div className="mt-3 flex items-center gap-3">
-                  <span className="text-xs text-slate-600 font-medium">Exact traveler count:</span>
+                  <span className="text-xs text-slate-600 font-semibold">Exact traveler count:</span>
                   <input
                     type="number"
                     min={1}
@@ -480,23 +480,23 @@ export const WizardPage: React.FC = () => {
                       setTravelers(Math.max(1, parseInt(e.target.value) || 1));
                       setGroupType('custom');
                     }}
-                    className="w-20 px-3 py-1.5 rounded-xl border border-sand-300 text-sm text-center font-bold text-slate-800"
+                    className="w-20 px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-sm text-center font-extrabold text-slate-800 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/20 outline-none"
                   />
                 </div>
               </div>
 
               {/* Budget Calculation & Tier Badge */}
-              <div className="pt-2 border-t border-sand-200 space-y-4">
+              <div className="pt-2 border-t border-slate-200 space-y-4">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-700">
                     Budget Planning
                   </label>
-                  <div className="flex items-center rounded-xl bg-sand-100 p-1 border border-sand-200 text-xs">
+                  <div className="flex items-center rounded-xl bg-slate-100 p-1 border border-slate-200 text-xs">
                     <button
                       type="button"
                       onClick={() => setBudgetType('total')}
-                      className={`px-3 py-1 rounded-lg font-semibold transition-all ${
-                        budgetType === 'total' ? 'bg-white shadow-2xs text-forest-900' : 'text-slate-600'
+                      className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                        budgetType === 'total' ? 'bg-white shadow-xs text-brand-700' : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       Total Budget
@@ -504,8 +504,8 @@ export const WizardPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setBudgetType('per_person')}
-                      className={`px-3 py-1 rounded-lg font-semibold transition-all ${
-                        budgetType === 'per_person' ? 'bg-white shadow-2xs text-forest-900' : 'text-slate-600'
+                      className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                        budgetType === 'per_person' ? 'bg-white shadow-xs text-brand-700' : 'text-slate-600 hover:text-slate-900'
                       }`}
                     >
                       Per Person
@@ -515,7 +515,7 @@ export const WizardPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="sm:col-span-2">
-                    <span className="text-xs text-slate-500 mb-1 block">
+                    <span className="text-xs text-slate-500 mb-1 block font-medium">
                       {budgetType === 'total' ? 'Total Trip Budget ($)' : 'Budget Per Traveler ($)'}
                     </span>
                     <div className="relative">
@@ -526,17 +526,17 @@ export const WizardPage: React.FC = () => {
                         step={50}
                         value={budgetInput}
                         onChange={(e) => setBudgetInput(Math.max(50, parseFloat(e.target.value) || 0))}
-                        className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-sand-300 text-base font-bold text-slate-900 focus:border-forest-600 outline-none"
+                        className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white/80 text-base font-extrabold text-slate-900 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <span className="text-xs text-slate-500 mb-1 block">Currency</span>
+                    <span className="text-xs text-slate-500 mb-1 block font-medium">Currency</span>
                     <select
                       value={currency}
                       onChange={(e) => setCurrency(e.target.value)}
-                      className="w-full py-2.5 px-3 rounded-xl border border-sand-300 text-sm font-semibold text-slate-800 bg-white"
+                      className="w-full py-2.5 px-3 rounded-xl border border-slate-200 text-sm font-bold text-slate-800 bg-white outline-none focus:border-brand-500"
                     >
                       <option value="USD">USD ($)</option>
                       <option value="EUR">EUR (€)</option>
@@ -549,7 +549,7 @@ export const WizardPage: React.FC = () => {
                 </div>
 
                 {/* Live Cost Breakdown Cards */}
-                <div className="p-4 rounded-2xl bg-sand-50 border border-sand-200 grid grid-cols-3 gap-2 text-center">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-3 gap-2 text-center">
                   <div>
                     <div className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Total Budget</div>
                     <div className="text-sm sm:text-base font-extrabold text-slate-900 mt-0.5">
@@ -558,7 +558,7 @@ export const WizardPage: React.FC = () => {
                   </div>
                   <div>
                     <div className="text-[11px] text-slate-500 uppercase tracking-wider font-semibold">Per Person / Day</div>
-                    <div className="text-sm sm:text-base font-extrabold text-forest-800 mt-0.5">
+                    <div className="text-sm sm:text-base font-extrabold text-brand-600 mt-0.5">
                       ${perPersonPerDay.toFixed(0)}
                     </div>
                   </div>
@@ -569,7 +569,7 @@ export const WizardPage: React.FC = () => {
                         budgetTier === 'Budget'
                           ? 'bg-amber-100 text-amber-900'
                           : budgetTier === 'Moderate'
-                          ? 'bg-blue-100 text-blue-900'
+                          ? 'bg-brand-100 text-brand-800'
                           : 'bg-purple-100 text-purple-900'
                       }`}>
                         {budgetTier}
@@ -616,11 +616,11 @@ export const WizardPage: React.FC = () => {
                         onClick={() => setTravelVibe(v.id)}
                         className={`p-3.5 rounded-2xl border text-left transition-all ${
                           isSelected
-                            ? 'border-forest-700 bg-forest-50/70 shadow-2xs'
-                            : 'border-sand-200 hover:border-sand-300 bg-white'
+                            ? 'border-brand-500 bg-brand-50/70 shadow-xs'
+                            : 'border-slate-200 hover:border-slate-300 bg-white/70'
                         }`}
                       >
-                        <Icon className={`w-5 h-5 mb-1.5 ${isSelected ? 'text-forest-800' : 'text-slate-400'}`} />
+                        <Icon className={`w-5 h-5 mb-1.5 ${isSelected ? 'text-brand-600' : 'text-slate-400'}`} />
                         <div className="font-bold text-xs text-slate-900">{v.name}</div>
                         <div className="text-[10px] text-slate-500 leading-tight mt-0.5">{v.desc}</div>
                       </button>
@@ -646,8 +646,8 @@ export const WizardPage: React.FC = () => {
                       onClick={() => setTravelPace(p.id as any)}
                       className={`p-3 rounded-2xl border text-left transition-all ${
                         travelPace === p.id
-                          ? 'border-forest-700 bg-forest-50/70'
-                          : 'border-sand-200 bg-white hover:bg-sand-50'
+                          ? 'border-brand-500 bg-brand-50/70 shadow-xs'
+                          : 'border-slate-200 bg-white/70 hover:bg-slate-50'
                       }`}
                     >
                       <div className="font-bold text-xs text-slate-900">{p.label}</div>
@@ -863,13 +863,13 @@ export const WizardPage: React.FC = () => {
         </AnimatePresence>
 
         {/* Footer Stepper Buttons */}
-        <div className="mt-8 pt-6 border-t border-sand-200 flex items-center justify-between">
+        <div className="mt-8 pt-6 border-t border-slate-200/80 flex items-center justify-between">
           {step > 1 ? (
             <button
               type="button"
               onClick={handleBack}
               disabled={isSubmitting}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-sand-100 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors disabled:opacity-50"
             >
               <ArrowLeft className="w-4 h-4" />
               Previous Step
@@ -882,7 +882,7 @@ export const WizardPage: React.FC = () => {
             <button
               type="button"
               onClick={handleNext}
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold shadow-xs transition-all"
+              className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold shadow-sm shadow-brand-600/20 active:scale-95 transition-all"
             >
               Continue
               <ArrowRight className="w-4 h-4" />
@@ -892,11 +892,11 @@ export const WizardPage: React.FC = () => {
               type="button"
               onClick={() => handleSubmit(false)}
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-forest-800 hover:bg-forest-900 text-white text-sm font-extrabold shadow-md hover:shadow-lg transition-all disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-extrabold shadow-md shadow-brand-600/25 hover:shadow-lg hover:shadow-brand-600/35 active:scale-98 transition-all disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>
-                  <Sparkles className="w-4 h-4 animate-spin text-forest-200" />
+                  <Sparkles className="w-4 h-4 animate-spin text-brand-200" />
                   Generating Itinerary...
                 </>
               ) : (
@@ -912,14 +912,14 @@ export const WizardPage: React.FC = () => {
 
       {/* Guest Auth Modal */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl border border-sand-200 max-w-md w-full p-6 sm:p-8 shadow-xl space-y-5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
+          <div className="glass-card rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150 relative">
             <div className="text-center">
-              <div className="w-12 h-12 rounded-2xl bg-forest-50 text-forest-800 flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-brand-50 text-brand-700 border border-brand-200/50 flex items-center justify-center mx-auto mb-3 shadow-xs">
                 <Compass className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900">Save Your Itinerary</h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <h3 className="text-xl font-extrabold text-slate-900">Save Your Itinerary</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-xs mx-auto">
                 You are currently exploring as a guest. To save this trip and return to it anytime, please sign in or create an account.
               </p>
             </div>
@@ -928,14 +928,14 @@ export const WizardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/login?redirect=/wizard')}
-                className="w-full py-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-sm shadow-sm transition-all text-center"
+                className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-600/20 active:scale-98 transition-all text-center"
               >
                 Sign In to My Account
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/register?redirect=/wizard')}
-                className="w-full py-3 rounded-xl bg-sand-100 hover:bg-sand-200 text-slate-800 font-bold text-sm transition-colors text-center"
+                className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm transition-colors text-center border border-slate-200/60"
               >
                 Create Free Account
               </button>
@@ -945,9 +945,9 @@ export const WizardPage: React.FC = () => {
                   setShowAuthModal(false);
                   handleSubmit(true);
                 }}
-                className="w-full py-2.5 rounded-xl border border-dashed border-forest-300 bg-forest-50/50 hover:bg-forest-50 text-forest-900 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 rounded-xl border border-dashed border-brand-300 bg-brand-50/50 hover:bg-brand-50 text-brand-900 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
               >
-                <Sparkles className="w-3.5 h-3.5 text-forest-700" />
+                <Sparkles className="w-3.5 h-3.5 text-brand-600" />
                 Generate Now as Demo Explorer
               </button>
             </div>

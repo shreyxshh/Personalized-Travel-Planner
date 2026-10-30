@@ -74,3 +74,69 @@ export const deleteTrip = async (req: AuthenticatedRequest, res: Response, next:
     next(error);
   }
 };
+
+export const getCollaborators = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const collaborators = await tripRepository.getCollaborators(tripId);
+    res.json(collaborators);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addCollaborator = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const { email, role = 'viewer' } = req.body;
+    const collaborator = await tripRepository.addCollaborator(tripId, email, role);
+    res.status(201).json(collaborator);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateCollaborator = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const { collaboratorId } = req.params;
+    const { role } = req.body;
+    const updated = await tripRepository.updateCollaborator(tripId, collaboratorId, role);
+    if (!updated) {
+      throw new AppError('Collaborator not found', 404);
+    }
+    res.json(updated);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeCollaborator = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const tripId = req.params.tripId || req.params.id;
+    const { collaboratorId } = req.params;
+    const deleted = await tripRepository.deleteCollaborator(tripId, collaboratorId);
+    if (!deleted) {
+      throw new AppError('Collaborator not found', 404);
+    }
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};

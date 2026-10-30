@@ -25,7 +25,7 @@ export class OSRMProvider implements IMapsRoutingProvider {
       const timeout = setTimeout(() => controller.abort(), 3500);
 
       const response = await fetch(url, {
-        headers: { 'User-Agent': 'WanderAI-TravelPlanner-MVP/1.0' },
+        headers: { 'User-Agent': 'Voyex-TravelOS/1.0' },
         signal: controller.signal,
       });
       clearTimeout(timeout);
@@ -73,7 +73,7 @@ export class OSRMProvider implements IMapsRoutingProvider {
       const timeout = setTimeout(() => controller.abort(), 3000);
 
       const response = await fetch(url, {
-        headers: { 'User-Agent': 'WanderAI-TravelPlanner/1.0 (contact: info@wanderai.demo)' },
+        headers: { 'User-Agent': 'Voyex-TravelOS/1.0 (contact: info@voyex.app)' },
         signal: controller.signal,
       });
       clearTimeout(timeout);

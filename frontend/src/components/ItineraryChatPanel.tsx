@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
   Send,
@@ -10,7 +9,8 @@ import {
   AlertCircle,
   HelpCircle,
   RotateCcw,
-  MessageSquare
+  MessageSquare,
+  Wand2,
 } from 'lucide-react';
 import { api } from '../api/client';
 import { Itinerary, RefinementMessage } from '../types';
@@ -42,7 +42,7 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
     {
       id: 'welcome',
       role: 'assistant',
-      content: `Hello! I'm your Gemini AI travel companion for ${destination}. Tell me how you'd like to adjust your trip (e.g., 'Make day 2 more relaxed', 'Swap evening dinner for budget street food', or 'Add sunset photography spots'). Any activities you've locked with the padlock will be preserved!`,
+      content: `Hello! I'm your AI travel co-pilot for ${destination}. Tell me how you'd like to adjust your trip (e.g., 'Make day 2 more relaxed', 'Swap evening dinner for budget street food', or 'Add sunset photography spots'). Any activities you've locked with the padlock will be strictly preserved!`,
       timestamp: new Date().toISOString(),
     },
   ]);
@@ -89,11 +89,14 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
         conversation_history: historyPayload,
       });
 
+      const explanation = res.assistant_message || res.explanation || 'Refinement complete.';
+      const changes = res.summary_of_changes || (res.changes_summary ? [res.changes_summary] : []);
+
       const assistantMsg: RefinementMessage = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: res.assistant_message,
-        summary_of_changes: res.summary_of_changes,
+        content: explanation,
+        summary_of_changes: changes,
         timestamp: new Date().toISOString(),
       };
 
@@ -111,26 +114,26 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
   const totalDays = currentItinerary?.days?.length || 3;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full sm:w-[480px] bg-white shadow-2xl z-50 flex flex-col border-l border-sand-200 animate-in slide-in-from-right duration-200">
+    <div className="fixed inset-y-0 right-0 w-full sm:w-[480px] bg-white shadow-2xl z-50 flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-200">
       {/* Header */}
-      <div className="p-4 sm:p-5 border-b border-sand-200 bg-sand-50/70 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-forest-800 text-white flex items-center justify-center shadow-xs">
-            <Sparkles className="w-4 h-4" />
+      <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-brand-600 to-forest-500 text-white flex items-center justify-center shadow-xs">
+            <Wand2 className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+            <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
               Conversational Refinement
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-forest-100 text-forest-800">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-100 text-brand-800">
                 v{currentItinerary.version || 1}
               </span>
             </h3>
-            <p className="text-xs text-slate-500">Fine-tune {destination} in real time</p>
+            <p className="text-xs text-slate-400">Fine-tune {destination} in real time</p>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-sand-200 transition-colors"
+          className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -138,15 +141,15 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
 
       {/* Locked Activities Bar */}
       {lockedActivityIds.length > 0 && (
-        <div className="px-4 py-2 bg-amber-50/80 border-b border-amber-200/60 flex items-center justify-between text-xs text-amber-900">
-          <div className="flex items-center gap-1.5 font-medium">
-            <Lock className="w-3.5 h-3.5 text-amber-600" />
-            <span>{lockedActivityIds.length} activity locked from changes</span>
+        <div className="px-4 py-2 bg-amber-50 border-b border-amber-200 flex items-center justify-between text-xs text-amber-900 font-semibold">
+          <div className="flex items-center gap-1.5">
+            <Lock className="w-3.5 h-3.5 text-amber-700" />
+            <span>{lockedActivityIds.length} activity pinned & protected</span>
           </div>
           <button
             type="button"
             onClick={onClearLocked}
-            className="text-[11px] font-semibold text-amber-700 hover:text-amber-900 underline"
+            className="text-[11px] font-bold text-amber-800 hover:underline"
           >
             Clear all
           </button>
@@ -154,15 +157,15 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
       )}
 
       {/* Target Day Selector */}
-      <div className="px-4 py-2 border-b border-sand-200 bg-white flex items-center gap-2 text-xs text-slate-600 overflow-x-auto">
-        <span className="shrink-0 font-medium text-slate-500">Scope:</span>
+      <div className="px-4 py-2 border-b border-slate-200 bg-white flex items-center gap-2 text-xs text-slate-600 overflow-x-auto">
+        <span className="shrink-0 font-bold text-slate-400">Scope:</span>
         <button
           type="button"
           onClick={() => setTargetDay(undefined)}
-          className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-colors ${
+          className={`px-3 py-1 rounded-xl text-xs font-bold shrink-0 transition-colors ${
             targetDay === undefined
-              ? 'bg-forest-800 text-white shadow-2xs'
-              : 'bg-sand-100 text-slate-600 hover:bg-sand-200'
+              ? 'bg-slate-900 text-white shadow-2xs'
+              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
           }`}
         >
           Entire Trip
@@ -172,10 +175,10 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
             key={dNum}
             type="button"
             onClick={() => setTargetDay(dNum)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition-colors ${
+            className={`px-3 py-1 rounded-xl text-xs font-bold shrink-0 transition-colors ${
               targetDay === dNum
-                ? 'bg-forest-800 text-white shadow-2xs'
-                : 'bg-sand-100 text-slate-600 hover:bg-sand-200'
+                ? 'bg-slate-900 text-white shadow-2xs'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             Day {dNum}
@@ -184,7 +187,7 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
       </div>
 
       {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -193,17 +196,17 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
             }`}
           >
             <div
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-xs leading-relaxed ${
+              className={`max-w-[85%] rounded-3xl px-4 py-3 text-xs leading-relaxed ${
                 msg.role === 'user'
-                  ? 'bg-forest-800 text-white rounded-br-xs'
-                  : 'bg-sand-100 text-slate-800 rounded-bl-xs border border-sand-200'
+                  ? 'bg-slate-950 text-white rounded-br-xs shadow-xs'
+                  : 'bg-white text-slate-800 rounded-bl-xs border border-slate-200/80 shadow-2xs'
               }`}
             >
-              <p>{msg.content}</p>
+              <p className="font-normal">{msg.content}</p>
 
               {msg.summary_of_changes && msg.summary_of_changes.length > 0 && (
                 <div className="mt-2.5 pt-2 border-t border-slate-200/60 space-y-1">
-                  <span className="font-bold text-[11px] uppercase tracking-wider text-forest-900 block">
+                  <span className="font-black text-[10px] uppercase tracking-wider text-brand-900 block">
                     Modifications made:
                   </span>
                   <ul className="list-disc list-inside space-y-0.5 text-[11px] text-slate-700">
@@ -221,14 +224,14 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
         ))}
 
         {isSending && (
-          <div className="flex items-center gap-2 p-3 rounded-2xl bg-sand-100 border border-sand-200 max-w-[80%] text-xs text-slate-600">
-            <Sparkles className="w-4 h-4 animate-spin text-forest-700 shrink-0" />
-            <span>Refining schedule with Gemini Flash...</span>
+          <div className="flex items-center gap-2 p-3.5 rounded-2xl bg-white border border-slate-200 max-w-[80%] text-xs text-slate-600 shadow-2xs">
+            <Sparkles className="w-4 h-4 animate-spin text-brand-600 shrink-0" />
+            <span className="font-medium">Refining schedule with AI engine...</span>
           </div>
         )}
 
         {error && (
-          <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
             <span>{error}</span>
           </div>
@@ -236,9 +239,9 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
       </div>
 
       {/* Quick Prompts Chips */}
-      <div className="px-4 py-2.5 border-t border-sand-200 bg-sand-50/50">
-        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 block">
-          Suggestions
+      <div className="px-4 py-2.5 border-t border-slate-200 bg-white">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 block">
+          Suggested Prompts
         </span>
         <div className="flex gap-1.5 overflow-x-auto pb-1 no-scrollbar">
           {quickPromptChips.map((chip) => (
@@ -247,7 +250,7 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
               type="button"
               onClick={() => handleSend(chip)}
               disabled={isSending}
-              className="px-2.5 py-1 rounded-full bg-white hover:bg-forest-50 border border-sand-200 hover:border-forest-400 text-[11px] font-medium text-slate-700 hover:text-forest-900 shrink-0 transition-colors disabled:opacity-50"
+              className="px-3 py-1 rounded-full bg-slate-100 hover:bg-brand-50 border border-slate-200 hover:border-brand-300 text-[11px] font-bold text-slate-700 hover:text-brand-900 shrink-0 transition-colors disabled:opacity-50"
             >
               {chip}
             </button>
@@ -256,7 +259,7 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
       </div>
 
       {/* Input Box */}
-      <div className="p-4 border-t border-sand-200 bg-white">
+      <div className="p-4 border-t border-slate-200 bg-white">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -274,12 +277,12 @@ export const ItineraryChatPanel: React.FC<ItineraryChatPanelProps> = ({
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             disabled={isSending}
-            className="flex-1 px-3.5 py-2.5 text-xs rounded-xl border border-sand-300 focus:border-forest-600 focus:ring-1 focus:ring-forest-600 outline-none text-slate-800 disabled:bg-slate-100"
+            className="flex-1 px-4 py-2.5 text-xs rounded-2xl border border-slate-200 focus:border-brand-600 outline-none text-slate-800 disabled:bg-slate-100 shadow-2xs font-medium"
           />
           <button
             type="submit"
             disabled={!inputText.trim() || isSending}
-            className="p-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-semibold transition-all disabled:opacity-40 shadow-xs"
+            className="p-2.5 rounded-2xl bg-slate-950 hover:bg-slate-900 text-white font-semibold transition-all disabled:opacity-40 shadow-xs"
           >
             <Send className="w-4 h-4" />
           </button>

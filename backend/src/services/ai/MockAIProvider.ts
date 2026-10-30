@@ -664,4 +664,65 @@ export class MockAIProvider implements IAIProvider {
 
     return newActivities.map((act, idx) => ({ ...act, display_order: idx + 1 }));
   }
+
+  public async refineItinerary(
+    trip: Trip,
+    currentItinerary: any,
+    message: string,
+    targetDay?: number,
+    preserveActivityIds: string[] = [],
+    _history?: Array<{ role: string; content: string }>
+  ): Promise<{
+    itinerary: any;
+    changesSummary: string;
+    explanation: string;
+  }> {
+    const updated = JSON.parse(JSON.stringify(currentItinerary));
+    const currency = trip.currency || 'USD';
+
+    let dayModified = 1;
+    if (targetDay && targetDay >= 1 && targetDay <= (updated.days?.length || 1)) {
+      dayModified = targetDay;
+    }
+
+    const dayObj = updated.days?.find((d: any) => d.day_number === dayModified) || updated.days?.[0];
+    if (dayObj) {
+      // Keep locked/preserved activities
+      const preserved = dayObj.activities?.filter((a: any) => preserveActivityIds.includes(a.id)) || [];
+
+      // Add refined activity reflecting message
+      const refinedActivity = {
+        id: `refined-${Date.now()}`,
+        itinerary_day_id: dayObj.id,
+        name: `Refined: ${message.slice(0, 35)}`,
+        description: `Customized itinerary activity tailored to traveler guidance: "${message}".`,
+        category: 'sightseeing',
+        start_time: '14:30',
+        end_time: '17:00',
+        location_name: `${trip.destination} Selected Highlight`,
+        latitude: dayObj.activities?.[0]?.latitude || 48.858,
+        longitude: dayObj.activities?.[0]?.longitude || 2.342,
+        estimated_cost: 25,
+        currency,
+        estimated_duration_minutes: 150,
+        verification_status: 'verified',
+        display_order: preserved.length + 1,
+      };
+
+      dayObj.activities = [...preserved, refinedActivity].map((act: any, idx: number) => ({
+        ...act,
+        display_order: idx + 1,
+      }));
+      dayObj.summary = `${dayObj.summary || ''} (Refined: ${message.slice(0, 40)})`;
+    }
+
+    const changesSummary = `Updated Day ${dayModified} activities to incorporate: "${message}" while preserving ${preserveActivityIds.length} locked stop(s).`;
+    const explanation = `I have adjusted your Day ${dayModified} schedule to align with "${message}". All your locked activities were preserved in their exact order, and transit buffers have been recalibrated.`;
+
+    return {
+      itinerary: updated,
+      changesSummary,
+      explanation,
+    };
+  }
 }

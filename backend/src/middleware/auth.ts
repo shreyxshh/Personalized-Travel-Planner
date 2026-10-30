@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { config } from '../config/index.js';
 import { createClient } from '@supabase/supabase-js';
+import { verifyToken } from '../controllers/authController.js';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -23,34 +24,46 @@ export const authenticate = async (
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
 
-  // Demo user fallback when testing or without active Supabase token
+  // Demo user fallback when testing or without active token
   const defaultDemoUser = {
     id: '00000000-0000-0000-0000-000000000001',
-    email: 'traveler@wanderai.demo',
+    email: 'traveler@voyex.app',
     displayName: 'Demo Explorer',
   };
 
-  if (!token || token === 'demo-token' || !supabaseClient) {
+  if (!token || token === 'demo-token') {
     req.user = defaultDemoUser;
     return next();
   }
 
-  try {
-    const { data: { user }, error } = await supabaseClient.auth.getUser(token);
-    if (error || !user) {
-      // Fallback to demo user rather than locking the user out in dev/demo mode
-      req.user = defaultDemoUser;
-      return next();
-    }
-
+  // 1. Check local JWT signature
+  const localPayload = verifyToken(token);
+  if (localPayload && localPayload.sub) {
     req.user = {
-      id: user.id,
-      email: user.email,
-      displayName: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0],
+      id: localPayload.sub,
+      email: localPayload.email,
+      displayName: localPayload.name || localPayload.email?.split('@')[0],
     };
-    next();
-  } catch (err) {
-    req.user = defaultDemoUser;
-    next();
+    return next();
   }
+
+  // 2. Check Supabase token if Supabase is configured
+  if (supabaseClient) {
+    try {
+      const { data: { user }, error } = await supabaseClient.auth.getUser(token);
+      if (!error && user) {
+        req.user = {
+          id: user.id,
+          email: user.email,
+          displayName: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0],
+        };
+        return next();
+      }
+    } catch {
+      // Fallback below
+    }
+  }
+
+  req.user = defaultDemoUser;
+  next();
 };

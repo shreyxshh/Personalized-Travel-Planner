@@ -1,19 +1,18 @@
 # WanderAI — AI-Powered Personalized Travel Itinerary Planner
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi)](https://fastapi.tiangolo.com)
-[![Python 3.12](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python)](https://python.org)
-[![Google Gemini Flash](https://img.shields.io/badge/Google%20GenAI-Gemini%202.5%20Flash-4285F4?logo=google)](https://aistudio.google.com)
-[![React 18](https://img.shields.io/badge/React-18.3+-61DAFB?logo=react)](https://react.dev)
+[![Express.js](https://img.shields.io/badge/Express-4.21+-000000?logo=express)](https://expressjs.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5+-3178C6?logo=typescript)](https://www.typescriptlang.org)
+[![React 18](https://img.shields.io/badge/React-18.3+-61DAFB?logo=react)](https://react.dev)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4+-38B2AC?logo=tailwind-css)](https://tailwindcss.com)
+[![Google Gemini Flash](https://img.shields.io/badge/Google%20GenAI-Gemini%20Flash-4285F4?logo=google)](https://aistudio.google.com)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL_%26_RLS-3ECF8E?logo=supabase)](https://supabase.com)
-[![Pytest](https://img.shields.io/badge/Pytest-57%20Passed-0A9EDC?logo=pytest)](https://pytest.org)
-[![Vitest](https://img.shields.io/badge/Vitest-11%20Passed-6E9F18?logo=vitest)](https://vitest.dev)
-[![CI/CD](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions)](https://github.com)
+[![Vitest Backend](https://img.shields.io/badge/Backend%20Vitest-44%20Passed-6E9F18?logo=vitest)](https://vitest.dev)
+[![Vitest Frontend](https://img.shields.io/badge/Frontend%20Vitest-14%20Passed-6E9F18?logo=vitest)](https://vitest.dev)
+[![FastAPI Alternative](https://img.shields.io/badge/FastAPI%20Option-0.115+-009688?logo=fastapi)](https://fastapi.tiangolo.com)
 
-A production-ready, security-hardened, and performance-optimized AI Travel Planner. Generates personalized, day-by-day itineraries calibrated to travel style, budget, pace, dietary preferences, accessibility, and interests with interactive route optimization, conversational refinement, activity locking, multi-format exports, and companion collaboration.
+A production-ready, security-hardened, and performance-optimized AI Travel Planner. Generates personalized, day-by-day itineraries calibrated to travel style, budget, pace, dietary preferences, accessibility, and interests with interactive route optimization, conversational refinement, activity padlock pinning, multi-format exports (PDF/Markdown/iCal/JSON), and companion collaboration.
 
-> **100% Free / Zero-Cost Stack**: Built using Google Gemini Flash (free tier: 15 RPM / 1M TPM), Supabase PostgreSQL (free tier: 500MB), Render & Vercel free hosting, and a built-in deterministic Mock provider for instant offline execution without external API keys.
+> **100% Free / Zero-Cost Stack**: Built using Google Gemini Flash (free tier: 15 RPM / 1M TPM), Supabase PostgreSQL (free tier: 500MB), Render & Vercel hosting, and a built-in deterministic Mock provider for instant offline execution without external API keys.
 
 ---
 
@@ -22,14 +21,45 @@ A production-ready, security-hardened, and performance-optimized AI Travel Plann
 Explore the comprehensive project documentation in the [`docs/`](docs/) directory:
 
 - 🏛️ [**Architecture & System Design**](docs/architecture.md) — Multi-tier architecture, sequence diagrams, and failover design.
-- 🚀 [**Local Setup & Development Guide**](docs/setup-guide.md) — Step-by-step local setup for FastAPI backend, React frontend, and Docker.
+- 🚀 [**Local Setup & Development Guide**](docs/setup-guide.md) — Step-by-step local setup for Express TypeScript / FastAPI backend, React frontend, and Docker.
 - 🔄 [**System & User Workflows**](docs/workflow.md) — Visual workflow diagrams of trip creation, regeneration, collaboration, and CI/CD.
 - 🌐 [**Production Deployment Guide**](docs/deployment.md) — Zero-cost deployment on Render, Vercel, and Supabase.
-- 🧪 [**Verification & Testing Strategy**](docs/testing.md) — 57 Pytest backend tests, 14 Vitest frontend tests, and GitHub Actions CI.
+- 🧪 [**Verification & Testing Strategy**](docs/testing.md) — 44 Vitest backend tests, 14 Vitest frontend tests, 57 Pytest tests.
 - ⚠️ [**Known Limitations & Boundaries**](docs/limitations.md) — Free-tier limits (cold starts, rate limits) and implemented mitigations.
 - 🏁 [**Project Conclusion & Roadmap**](docs/conclusion.md) — Executive summary, retrospective lessons learned, and future phases.
 - 🔌 [**REST API Documentation**](docs/api.md) — Complete endpoint reference with request/response schemas.
 - 🗄️ [**Database Architecture & Schema**](docs/database.md) — Relational tables, constraints, and PostgreSQL RLS policies.
+
+---
+
+## 1. Quick Start
+
+### 1. Start Modern Express TypeScript Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+- API Server: `http://localhost:8000`
+- Health / Readiness Probes: `http://localhost:8000/health` & `http://localhost:8000/ready`
+- Runs all 44 Vitest integration tests: `npm test`
+
+### 2. Start Redesigned React 18 Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+- Web Application: `http://localhost:5173`
+- Runs all 14 Vitest unit tests: `npm test -- --run`
+
+### *(Optional) Legacy Python FastAPI Backend*
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+pytest tests/ -v
+```
 
 ---
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'forest' | 'ocean' | 'sand' | 'amber' | 'purple' | 'slate';
+  variant?: 'forest' | 'ocean' | 'sand' | 'amber' | 'purple' | 'slate' | 'brand';
   size?: 'sm' | 'md';
   className?: string;
 }
@@ -14,6 +14,7 @@ export const Badge: React.FC<BadgeProps> = ({
   className = '',
 }) => {
   const variantStyles = {
+    brand: 'bg-brand-50 text-brand-800 border-brand-200',
     forest: 'bg-forest-50 text-forest-800 border-forest-200',
     ocean: 'bg-ocean-50 text-ocean-800 border-ocean-200',
     sand: 'bg-sand-100 text-slate-700 border-sand-300',

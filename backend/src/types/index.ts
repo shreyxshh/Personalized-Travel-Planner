@@ -183,9 +183,83 @@ export interface PublicShareView {
 
 export interface UserProfile {
   id: string;
+  email?: string;
   display_name?: string;
   preferred_currency: string;
   default_preferences?: Partial<TravelPreferences>;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
+
+export interface Collaborator {
+  id: string;
+  trip_id: string;
+  user_id?: string;
+  email: string;
+  role: 'viewer' | 'editor';
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface ItineraryVersionItem {
+  id?: string;
+  trip_id: string;
+  version: number;
+  created_at: string;
+  changes_summary?: string;
+  author_email?: string;
+}
+
+export interface ItineraryVersionListResponse {
+  trip_id: string;
+  current_version: number;
+  total_versions: number;
+  versions: ItineraryVersionItem[];
+}
+
+export interface RefinementRequest {
+  message: string;
+  target_day?: number;
+  preserve_activity_ids?: string[];
+  conversation_history?: Array<{ role: string; content: string }>;
+}
+
+export interface RefinementResponse {
+  itinerary: Itinerary;
+  version: number;
+  changes_summary: string;
+  explanation: string;
+}
+
+export interface RouteStopInput {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  estimated_duration_minutes?: number;
+  is_fixed_time?: boolean;
+  fixed_start_time?: string;
+  category?: string;
+}
+
+export interface RouteOptimizeRequest {
+  stops: RouteStopInput[];
+  start_location?: { latitude: number; longitude: number };
+  end_location?: { latitude: number; longitude: number };
+  transit_mode?: 'driving' | 'walking';
+  travel_pace?: 'relaxed' | 'moderate' | 'fast';
+  day_start_time?: string;
+  day_end_time?: string;
+}
+
+export interface RouteComparisonMetric {
+  original_total_distance_km: number;
+  optimized_total_distance_km: number;
+  distance_saved_km: number;
+  distance_saved_percentage: number;
+  original_transit_time_min: number;
+  optimized_transit_time_min: number;
+  time_saved_min: number;
+  time_saved_percentage: number;
+}
+

@@ -456,17 +456,17 @@ export const TripDetailsPage: React.FC = () => {
               />
             </div>
 
-            <div className="pt-2 border-t border-sand-200 flex justify-end gap-2">
+            <div className="pt-2 border-t border-slate-200 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setEditingActivity(null)}
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-sand-100"
+                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-xl bg-forest-800 text-white font-bold text-xs hover:bg-forest-900 shadow-xs"
+                className="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 shadow-sm"
               >
                 Save Changes
               </button>
@@ -491,21 +491,21 @@ export const TripDetailsPage: React.FC = () => {
             placeholder="e.g. Focus more on traditional teahouses, less walking, and find a romantic dinner spot."
             value={regenerateFeedback}
             onChange={(e) => setRegenerateFeedback(e.target.value)}
-            className="w-full p-3 rounded-xl border border-sand-300 text-xs text-slate-800 outline-none focus:border-forest-600"
+            className="w-full p-3 rounded-xl border border-slate-200 text-xs text-slate-800 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/20"
           />
 
-          <div className="pt-2 border-t border-sand-200 flex justify-end gap-2">
+          <div className="pt-2 border-t border-slate-200 flex justify-end gap-2">
             <button
               type="button"
               onClick={() => setRegenerateDayId(null)}
-              className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-sand-100"
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isRegeneratingDay}
-              className="px-4 py-2 rounded-xl bg-forest-800 text-white font-bold text-xs hover:bg-forest-900 shadow-xs disabled:opacity-50 flex items-center gap-1.5"
+              className="px-4 py-2 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 shadow-sm disabled:opacity-50 flex items-center gap-1.5"
             >
               {isRegeneratingDay ? (
                 <>

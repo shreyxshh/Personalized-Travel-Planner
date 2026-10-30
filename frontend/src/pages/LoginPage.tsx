@@ -43,27 +43,30 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto px-4 py-16">
-      <div className="bg-white rounded-3xl border border-sand-200 p-8 shadow-sm space-y-6">
+      <div className="glass-card rounded-3xl p-8 sm:p-10 shadow-xl space-y-6 relative overflow-hidden">
+        {/* Ambient Top Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-2 bg-gradient-to-r from-brand-500 via-indigo-500 to-purple-500 rounded-b-full opacity-80" />
+
         <div className="text-center">
-          <div className="w-12 h-12 rounded-2xl bg-forest-800 text-white flex items-center justify-center mx-auto mb-3 shadow-md">
-            <Compass className="w-6 h-6" />
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-500/20">
+            <Compass className="w-7 h-7" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Sign In to WanderAI</h2>
-          <p className="text-xs text-slate-500 mt-1">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Sign In to Voyex</h2>
+          <p className="text-xs text-slate-500 mt-2 max-w-xs mx-auto">
             Access your saved itineraries, custom routes, and travel preferences.
           </p>
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl bg-red-50 border border-red-200 flex items-center gap-2 text-xs text-red-700">
-            <AlertCircle className="w-4 h-4 shrink-0" />
+          <div className="p-3.5 rounded-xl bg-red-50/80 border border-red-200/80 flex items-center gap-2.5 text-xs text-red-700">
+            <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
             <span>{error}</span>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
               Email Address
             </label>
             <div className="relative">
@@ -74,13 +77,13 @@ export const LoginPage: React.FC = () => {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-sand-300 text-sm outline-none focus:border-forest-600"
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white/70 text-slate-900 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all placeholder:text-slate-400"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase text-slate-600 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
               Password
             </label>
             <div className="relative">
@@ -91,7 +94,7 @@ export const LoginPage: React.FC = () => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-sand-300 text-sm outline-none focus:border-forest-600"
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white/70 text-slate-900 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -99,7 +102,7 @@ export const LoginPage: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-sm shadow transition-all disabled:opacity-50"
+            className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm shadow-md shadow-brand-600/20 hover:shadow-lg hover:shadow-brand-600/30 active:scale-[0.99] transition-all disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
@@ -107,10 +110,12 @@ export const LoginPage: React.FC = () => {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-sand-200" />
+            <div className="w-full border-t border-slate-200" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-slate-400 font-semibold">Or for quick testing</span>
+            <span className="bg-white/80 px-3 text-slate-400 font-semibold tracking-wider text-[10px]">
+              Or for quick testing
+            </span>
           </div>
         </div>
 
@@ -118,17 +123,17 @@ export const LoginPage: React.FC = () => {
         <button
           type="button"
           onClick={handleDemoLogin}
-          className="w-full py-2.5 rounded-xl bg-forest-50 hover:bg-forest-100 text-forest-900 border border-forest-200 text-xs font-bold transition-colors flex items-center justify-center gap-2"
+          className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200 text-xs font-bold transition-all flex items-center justify-center gap-2 hover:border-slate-300"
         >
-          <Sparkles className="w-4 h-4 text-forest-700" />
+          <Sparkles className="w-4 h-4 text-brand-600" />
           Continue as Demo Explorer
         </button>
 
-        <p className="text-center text-xs text-slate-500 pt-2">
+        <p className="text-center text-xs text-slate-500 pt-1">
           Don't have an account yet?{' '}
           <Link
             to={redirectPath !== '/dashboard' ? `/register?redirect=${encodeURIComponent(redirectPath)}` : '/register'}
-            className="font-semibold text-forest-800 hover:underline"
+            className="font-bold text-brand-600 hover:text-brand-700 hover:underline"
           >
             Create account
           </Link>

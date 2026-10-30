@@ -141,4 +141,19 @@ export class GroqAIProvider implements IAIProvider {
 
     return this.fallback.regenerateDay(trip, day, feedback, preserveActivities);
   }
+
+  public async refineItinerary(
+    trip: Trip,
+    currentItinerary: any,
+    message: string,
+    targetDay?: number,
+    preserveActivityIds: string[] = [],
+    history?: Array<{ role: string; content: string }>
+  ): Promise<{
+    itinerary: any;
+    changesSummary: string;
+    explanation: string;
+  }> {
+    return this.fallback.refineItinerary(trip, currentItinerary, message, targetDay, preserveActivityIds, history);
+  }
 }

@@ -29,4 +29,20 @@ export interface ITripRepository {
   createShare(tripId: string, ownerId: string, expiresInDays: number): Promise<ShareResponse>;
   getPublicShare(shareToken: string): Promise<PublicShareView | null>;
   revokeShare(shareId: string, ownerId: string): Promise<boolean>;
+
+  // Collaborators
+  getCollaborators(tripId: string): Promise<any[]>;
+  addCollaborator(tripId: string, email: string, role: 'viewer' | 'editor'): Promise<any>;
+  updateCollaborator(tripId: string, collaboratorId: string, role: 'viewer' | 'editor'): Promise<any | null>;
+  deleteCollaborator(tripId: string, collaboratorId: string): Promise<boolean>;
+
+  // Versioning
+  saveVersionSnapshot(tripId: string, version: number, snapshot: any, changesSummary?: string): Promise<any>;
+  getVersions(tripId: string): Promise<any[]>;
+  getVersion(tripId: string, version: number): Promise<any | null>;
+
+  // Local Auth Users
+  registerUser(user: any): Promise<any>;
+  getUserByEmail(email: string): Promise<any | null>;
+  getUserById(id: string): Promise<any | null>;
 }

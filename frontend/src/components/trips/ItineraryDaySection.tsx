@@ -64,29 +64,29 @@ export const ItineraryDaySection: React.FC<ItineraryDaySectionProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-3xl border border-sand-200 p-6 sm:p-8 shadow-xs space-y-6">
+    <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
       {/* Day Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-sand-200">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-200/80">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-extrabold uppercase tracking-wider text-forest-800">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-brand-700 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200/60">
               Day {day.day_number} &bull; {day.date}
             </span>
           </div>
-          <h3 className="text-lg sm:text-xl font-bold text-slate-900 mt-0.5">
+          <h3 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-1.5">
             {day.summary || `Exploration of local sights and culture`}
           </h3>
           {day.notes && (
-            <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">{day.notes}</p>
+            <p className="text-xs text-slate-500 mt-1.5 max-w-2xl leading-relaxed">{day.notes}</p>
           )}
         </div>
 
         <button
           type="button"
           onClick={() => onRegenerateDay(day.id)}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-sand-100 hover:bg-sand-200 text-slate-700 font-semibold text-xs transition-colors shrink-0"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100/80 hover:bg-slate-200/80 text-slate-700 font-bold text-xs transition-colors shrink-0 border border-slate-200/60 active:scale-95"
         >
-          <RefreshCw className="w-3.5 h-3.5 text-forest-700" />
+          <RefreshCw className="w-3.5 h-3.5 text-brand-600" />
           Regenerate Day {day.day_number}
         </button>
       </div>
@@ -99,12 +99,12 @@ export const ItineraryDaySection: React.FC<ItineraryDaySectionProps> = ({
           {renderSlotGroup('Evening & Dining', <Moon className="w-4 h-4 text-indigo-500" />, eveningActs)}
         </div>
       ) : (
-        <div className="p-8 text-center text-slate-500 bg-sand-50 rounded-2xl border border-dashed border-sand-300">
+        <div className="p-8 text-center text-slate-500 bg-slate-50/60 rounded-2xl border border-dashed border-slate-300">
           <p className="text-sm font-medium">No activities scheduled for this day.</p>
           <button
             type="button"
             onClick={() => onRegenerateDay(day.id)}
-            className="mt-2 text-xs font-bold text-forest-800 hover:underline"
+            className="mt-2 text-xs font-bold text-brand-600 hover:underline"
           >
             Click here to generate Day {day.day_number} schedule
           </button>
