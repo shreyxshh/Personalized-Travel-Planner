@@ -1,4 +1,4 @@
-# WanderAI — AI-Powered Personalized Travel Itinerary Planner
+# Voyex — AI-Powered Personalized Travel Itinerary Planner
 
 [![Express.js](https://img.shields.io/badge/Express-4.21+-000000?logo=express)](https://expressjs.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5+-3178C6?logo=typescript)](https://www.typescriptlang.org)
